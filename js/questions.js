@@ -3,14 +3,14 @@ window.data = {
 	    { 
 	    	"question":"Câu 1:Đây là ai ?:",
 	     	"choices": ['A. Donald Trump','B. Obama','C. Bill Gate','D. JackMa'],
-	     	"image" : '',
+	     	"image" : 'img1.jpg',
 	     	"answer" : 'A. Donald Trump',
 	     	"score" : 100
 	  	},
 	  	{ 
 	    	"question":"Câu 2: Javascript là ngôn ngữ thông dịch hay biên dịch ?",
 	     	"choices": ['A. Thông dịch','B. Diễn dịch','C. Cả hai dạng','D. Không có dạng nào ở trên'],
-	     	"image" : 'img1.jpg',
+	     	"image" : '',
 	     	"answer" : 'A. Thông dịch',
 	     	"score" : 200
 	  	},

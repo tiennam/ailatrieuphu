@@ -3,21 +3,24 @@ function Game(questions) {
     this.questions = questions;
     this.currentQuestionIndex = 0;
     this.time = 0;
+    this.start = false;
+    this.isGuess = false;
 }
-Game.prototype.startGame = function (e) {
+Game.prototype.startGame = function(e) {
     if (e.keyCode == 13) {
         window.removeEventListener('keydown', game.startGame);
         GameUI.displayNext();
+        game.start = true;
     }
 };
 Game.prototype.getScore = function() {
     if (this.score < 1000) {
         return 0;
     }
-    if (this.score > 1000 && this.score < 32000) {
+    if (this.score >= 1000 && this.score < 32000) {
         return 1000;
     }
-    if (this.score > 32000 && this.score < 1000000) {
+    if (this.score >= 32000 && this.score < 1000000) {
         return 32000;
     }
 };
@@ -36,11 +39,8 @@ Game.prototype.getCurrentQuestion = function() {
 Game.prototype.hasEndGame = function() {
     return this.currentQuestionIndex >= this.questions.length;
 };
-Game.prototype.isCorrectAnswer = function(choice) {
-    return this.answer === choice;
-};
 Game.prototype.keyDownHandler = function(e) {
-    if (!$('.raise').hasClass('check')) {
+    if (!game.isGuess && game.start) {
         switch (e.keyCode) {
             case 65:
                 GameUI.guessHandler(0);
@@ -57,25 +57,27 @@ Game.prototype.keyDownHandler = function(e) {
         }
     }
 };
-Game.prototype.help50_50 = function () {
-    var excluded, min = 0 , max = 3;
+Game.prototype.help50_50 = function() {
+    var excluded, min = 0,
+        max = 3;
     $('.raise').each(function(index, el) {
         if ($(this).text() === game.getCurrentQuestion().answer) {
             excluded = index;
             return false;
         }
     });
-    var n = Math.floor(Math.random() * (max-min) + min);
+    var n = Math.floor(Math.random() * (max - min) + min);
     if (n >= excluded) n++;
-    return [n,excluded];
+    return [n, excluded];
 }
 var GameUI = {
     displayNext: function() {
         if (game.hasEndGame()) {
+            GameAudio.playAudio('key', 7);
+            this.displayHTML('.win,#wrapper')
             swal("XIN CHÚC MỪNG !", "CHÚC MỪNG BẠN ĐÃ TRỞ THÀNH TRIỆU PHÚ !", "success");
         } else {
-            $('#start-game').hide();
-            $('#wrapper').show();
+            this.displayHTML('#wrapper,#start-game');
             GameUI.countDown();
             this.displayQuestion();
             this.displayMedia();
@@ -86,9 +88,9 @@ var GameUI = {
     displayQuestion: function() {
         var question = $("#question").text(game.getCurrentQuestion().question);
     },
-    displayMedia:function () {
-       var image = game.getCurrentQuestion().image;
-       if (image) {
+    displayMedia: function() {
+        var image = game.getCurrentQuestion().image;
+        if (image) {
             var img = '<img src=images/' + image + '>';
             $('.box-media').show();
             $('.answer').css('margin-top', '0');
@@ -122,7 +124,9 @@ var GameUI = {
         scoreActive.addClass('active');
     },
     displayGameOver: function(message) {
-        GameAudio.playAudio('key',6);
+        $('#wrapper').hide();
+        $('.gameover').show();
+        GameAudio.playAudio('key', 6);
         swal({
                 title: message,
                 text: "Bạn có muốn chơi lại không ?",
@@ -140,45 +144,62 @@ var GameUI = {
                 }
             })
     },
-    countDown: function() {
-       var tenSeconds = new Date().getTime() + 30000;
-        $('#clock').countdown(tenSeconds,function (event) {
-            $(this).text(event.strftime('%S'));
-        })
-        .on('finish.countdown', function(event) {
-            GameUI.displayGameOver("Hết Giờ ! Bạn đã ra về với "+game.getScore()+" điểm.");
+    displayRule: function() {
+        $("#show_help").animatedModal({
+            animatedIn: 'bounceIn',
+            animatedOut: 'bounceOut',
+            color: 'rgb(244, 67, 54)'
         });
+        // GameAudio.playAudio('key',2);
+    },
+    displayHTML: function(elmShow, elmHide) {
+        $(elmHide).hide();
+        $(elmShow).show();
+    },
+    countDown: function() {
+        var tenSeconds = new Date().getTime() + 30000;
+        $('#clock').countdown(tenSeconds, function(event) {
+                $(this).text(event.strftime('%S'));
+            })
+            .on('finish.countdown', function(event) {
+                GameUI.displayGameOver("Hết Giờ ! Bạn đã ra về với " + game.getScore() + " điểm.");
+            });
     },
     guessHandler: function(index) {
+        game.isGuess = true;
         $('#clock').countdown('stop');
-        GameAudio.playAudio('key',3);
+        GameAudio.playAudio('key', 3);
         var choice = $(`#choice-${index}`);
         choice.addClass('check');
         var answer = choice.text();
         setTimeout(() => {
             if (game.guess(answer)) {
-                GameAudio.playAudio('correct',index);
+                GameAudio.playAudio('correct', index);
                 setTimeout(() => {
+                    $('#box-right').empty();
+                    game.isGuess = false;
                     GameUI.displayNext();
                 }, 2000);
             } else {
                 $('.raise').each(function(index, el) {
-                     if ($(this).text()==game.getCurrentQuestion().answer) {
-                         GameAudio.playAudio('wrong',index);
-                     }   
-                 });
-                this.displayGameOver('Bạn đã ra về với ' + game.getScore() + ' điểm !');
+                    if ($(this).text() == game.getCurrentQuestion().answer) {
+                        GameAudio.playAudio('wrong', index);
+                    }
+                });
+                setTimeout(() => {
+                    this.displayGameOver('Bạn đã ra về với ' + game.getScore() + ' điểm !');
+                }, 3000);
             }
         }, 1000);
     }
 }
 
 var GameAudio = {
-    playAudio : function(key,val){
+    playAudio: function(key, val) {
         var audio = document.querySelector(`audio[data-${key}="${val}"]`);
         audio.play();
     },
-    stopAudio :  function(key){
+    stopAudio: function(key) {
         var newAudio = document.querySelector(`audio[data-key="${key}"]`);
         newAudio.currentTime = 0;
         newAudio.paused;
@@ -189,9 +210,10 @@ var GameAudio = {
 // Create Game
 var questions = data.questions;
 var game = new Game(questions);
-GameAudio.playAudio('key',1);
+GameAudio.playAudio('key', 1);
 window.addEventListener('keydown', game.keyDownHandler);
 window.addEventListener('keydown', game.startGame);
+GameUI.displayRule();
 // $('#help50').on('click', function(event) {
 //     GameUI.displayHelp();
 // });

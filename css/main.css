@@ -59,12 +59,11 @@ animation: color 1s infinite;
 color: black;
 }
 .title{
-color: #cb72aa;
+color: #e0e0e0;
 font-family: monospace;
 font-size: 22px;
 text-align: center;
 padding: 20px;
-border: 1px solid #cb72aa;
 line-height: 40px;
 margin: 0 30px;
 }
@@ -99,8 +98,9 @@ padding: 10px;
 overflow: hidden;
 text-align: left;
 }
-.row.active{
-background: brown;
+.item.active{
+background: #8BC34A;
+    border-radius: 10px;
 }
 .box-media {
     width: 90%;
@@ -142,15 +142,15 @@ background-repeat: no-repeat;
 background-size: cover;
 display: none;
 }
-.win img{
-width: 50%;
-height: auto;
-position: absolute;
-top: 0;
-left: 0;
-right: 0;
-bottom: 0;
-margin: auto;
+.gameover{
+position: fixed;
+width: 100%;
+height: 100%;
+background: url('../images/gameover.jpg');
+background-repeat: no-repeat;
+background-size: cover;
+background-position: center;
+display: none;
 }
 #clock{
 height: 100px;
@@ -165,80 +165,59 @@ line-height: 100px;
 font-size: 40px;
 font-family: fantasy;
 }
-.menu, .menu-bg, .menu-burger {
-position: fixed;
-width: 50px;
-height: 50px;
-font-size: 30px;
-text-align: center;
-border-radius: 100%;
-right: 25px;
-top: 25px;
-}
-.menu-bg {
-background: #673ab7;
-pointer-events: none;
-transition: .3s;
-right: 50px;
-top: 50px;
-transform: translate3d(50%, -50%, 0);
-transform-origin: center center;
-}
-.menu-bg.fs {
-transform: translate3d(50%, -50%, 0);
-width: 300vw;
-height: 300vw;
-}
-.menu-burger {
-color: white;
-padding-top: 11px;
--webkit-user-select: none;
-cursor: pointer;
-transition: .4s;
-transform-origin: center;
-}
-.menu-burger.fs {
-transform: rotate(-180deg) translateY(10px);
-}
-.menu-items {
-position: absolute;
-line-height: 35px;
-padding: 0 100px;
-font-size: 18px;
-font-family: monospace;
-color: white;
-width: 100%;
-text-align: center;
-opacity: 0;
-transition: .4s;
-margin-top: 100px;
-transform: translateY(-200%);
-pointer-events: none;
-}
-.menu-items div {
-transition: 1s;
-opacity: 0;
-margin-top: 0px;
-}
-.menu-items.fs {
-transform: translateY(0);
-pointer-events: auto;
-opacity: 1;
-}
-.menu-items.fs div {
-opacity: 1;
-margin-top: 75px;
-}
-.content {
-padding: 100px 50px;
-line-height: 1.62em;
-color: #444;
-}
-.content h1 {
-font-weight: bold;
-font-size: 2em;
-margin-bottom: 1em;
-}
 .display-none{
 display: none;
+}
+
+#closebt-container {
+    position: relative;
+    text-align: center;
+    margin-top: 40px;
+}
+
+.closebt {
+    -webkit-transition: all 0.2s;
+    -moz-transition: all 0.2s;
+    -ms-transition: all 0.2s;
+    -o-transition: all 0.2s;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+.closebt:hover {
+    transform: rotate(90deg);
+}
+.modal-content{
+    border: none;
+    background: none;
+    margin-top: 50px;
+}
+.luatchoi{
+    line-height: 34px;
+    font-size: x-large;
+    font-family: monospace;
+}
+.luatchoi h3{
+    font-size: xx-large;
+    margin-bottom: 20px;
+}
+@keyframes help {
+    from { transform: scale(1);color:#fff; }
+    to {transform: scale(1.4);color:#CDDC39; }
+}
+#show_help{
+    position: absolute;
+    right: 81px;
+    font-size: 70px;
+    color: #fff;
+    top: 50px;
+     -webkit-animation: help 1s infinite;
+    animation: help 1s infinite;
+}
+.title {
+    border: 3px solid #e0e0e0;
+    border-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40"><path fill="#00a3ef" d="M25.7 22.1V18c3.2-.1 7.9-1 11.5-4.5 3-3.1 4.1-8.3.8-11.5-1.4-1.4-3.1-2-4.9-2-2.4 0-4.8 1.1-6.6 2.8-3.6 3.6-4.4 8.3-4.5 11.5h-4.1c-.1-3.2-1-7.9-4.5-11.5C11.7 1.1 9.2 0 6.9 0 5.1 0 3.4.6 2 2c-3.2 3.2-2.2 8.4.9 11.4 3.6 3.6 8.3 4.4 11.5 4.5V22c-3.2.1-7.9 1-11.5 4.5C-.2 29.6-1.3 34.8 2 38c1.4 1.4 3.1 2 4.9 2 2.4 0 4.8-1.1 6.6-2.8 3.6-3.6 4.4-8.3 4.5-11.5h4.1c.1 3.2 1 7.9 4.5 11.5 1.8 1.8 4.2 2.8 6.6 2.8 1.8 0 3.5-.6 4.9-2 3.2-3.2 2.2-8.4-.9-11.4-3.6-3.6-8.3-4.4-11.5-4.5zM18 18h4v4.1l-4-.1v-4zM29.1 5.4c1.1-1.1 2.6-1.8 4-1.8.9 0 1.7.3 2.3.9 1.7 1.7.9 4.6-.9 6.3-2.7 2.7-6.5 3.4-8.9 3.5.2-2.5.9-6.2 3.5-8.9zM5.4 10.9c-1.7-1.8-2.5-4.7-.9-6.4.6-.6 1.4-.9 2.3-.9 1.4 0 2.9.7 4 1.8 2.7 2.7 3.4 6.4 3.5 8.9-2.4-.1-6.2-.8-8.9-3.4zm5.5 23.7c-1.1 1.1-2.6 1.8-4 1.8-.9 0-1.7-.3-2.3-.9-1.7-1.7-.9-4.6.9-6.3 2.7-2.7 6.5-3.4 8.9-3.5-.2 2.5-.9 6.2-3.5 8.9zm24.6.9c-.6.6-1.4.9-2.3.9-1.4 0-2.9-.7-4-1.8-2.7-2.7-3.4-6.4-3.5-8.9 2.5.1 6.2.8 8.9 3.5 1.7 1.7 2.5 4.6.9 6.3z"/></svg>');
+  border-image-slice: 18;
+  border-image-width: 18px;
+  border-image-repeat: stretch;
+  border-image-outset: 15px;
 }

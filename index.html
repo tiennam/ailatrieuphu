@@ -4,7 +4,8 @@
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>GAME AI LÀ TRIỆU PHÚ</title>
-      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+      <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+      <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
       <link rel="stylesheet" type="text/css" href="css/button.css">
       <link rel="stylesheet" type="text/css" href="css/animate.css">
       <link rel="stylesheet" type="text/css" href="css/sweetalert.css">
@@ -13,22 +14,32 @@
    <body>
       <!-- Screen Start Game -->
       <section id="start-game" class="animated flipInY">
-         <img src="images/cover-start.jpg" alt="">
-         <div class="menu-bg"></div>
-         <div class="menu-burger">☰</div>
-         <div class="menu-items">
-            <h3 class="text-uppercase">Luật chơi</h3>
-            Người chơi có 15 câu hỏi cần phải trả lời cho mỗi lượt chơi, có 3 mốc quan trong là: câu hỏi thứ 5, 10, 15. <br> Người chơi có 3 quyền trợ giúp đắc lực là “50:50”, “hỏi ý kiến khán giả”, và “gọi điện thoại cho người thân”. <br> Bắt đầu từ câu hỏi thứ 6, người chơi có thêm một quyền trợ giúp nữa là: “hỏi tổ tư vấn tại chổ”.
-            Người chơi có 15 giây để trả lời một câu hỏi. Riêng quyền trợ giúp“gọi điện cho người thân” được cộng thêm 30 giây để người chơi tìm kiếm thông tin và trả lời.
-            Nếu người chơi biết cách dừng cuộc chơi đúng lúc trong một lượt chơi, số điểm thưởng sẽ được giữ nguyên. Trả lời sai, số điểm thưởng sẽ quay về mức: 0, 5 hoặc 10 tùy vào mức độ trả lời câu hỏi của bạn. <br>
-            Tổng điểm được tính bằng tất cả các điểm trong mỗi lượt chơi cộng lại. 
+         <a id="show_help" href="#animatedModal"><i class="fa fa-question-circle" aria-hidden="true"></i></a>
+         <div id="animatedModal">
+            <div class="close-animatedModal"> 
+               <img id="closebt-container" class="closebt" src="images/closebt.svg">
+            </div>
+            <div class="modal-content">
+               <div class="container">
+                  <div class="row">
+                     <div class="col-md-12 luatchoi">
+                        <h3 class="text-uppercase">Luật chơi</h3>
+                        Người chơi có 15 câu hỏi cần phải trả lời cho mỗi lượt chơi, có 3 mốc quan trong là: câu hỏi thứ 5, 10, 15. <br> Người chơi có 3 quyền trợ giúp đắc lực là “50:50”, “hỏi ý kiến khán giả”, và “gọi điện thoại cho người thân”. <br> Bắt đầu từ câu hỏi thứ 6, người chơi có thêm một quyền trợ giúp nữa là: “hỏi tổ tư vấn tại chổ”.
+                        Người chơi có 15 giây để trả lời một câu hỏi. Riêng quyền trợ giúp“gọi điện cho người thân” được cộng thêm 30 giây để người chơi tìm kiếm thông tin và trả lời.
+                        Nếu người chơi biết cách dừng cuộc chơi đúng lúc trong một lượt chơi, số điểm thưởng sẽ được giữ nguyên. Trả lời sai, số điểm thưởng sẽ quay về mức: 0, 5 hoặc 10 tùy vào mức độ trả lời câu hỏi của bạn. <br>
+                        Tổng điểm được tính bằng tất cả các điểm trong mỗi lượt chơi cộng lại. 
+                     </div>
+                  </div>
+               </div>
+            </div>
          </div>
+         <img src="images/cover-start.jpg" alt="">
       </section>
       <!-- End Screen Start Game -->
       <div id="wrapper" class="animated bounceIn">
          <div id="box-left">
             <!-- <button id="help50">50/50</button> -->
-            <div class="title pulse" id="question"></div>
+            <div class="title" id="question"></div>
             <div class="box-media" style="display: none;"></div>
             <div class="answer">
                <div class="row">
@@ -40,7 +51,9 @@
          </div>
          <div id="clock"></div>
       </div>
-      <div class="win" >
+      <div class="win">
+      </div>
+      <div class="gameover animated jello">
       </div>
       <audio data-key="1" src="sounds/Begin.mp3"></audio>
       <audio data-key="2" src="sounds/Hoi.mp3"></audio>
@@ -57,24 +70,13 @@
       <audio data-wrong="1" src="sounds/b_s.mp3"></audio>
       <audio data-wrong="2" src="sounds/c_s.mp3"></audio>
       <audio data-wrong="3" src="sounds/d_s.mp3"></audio>
-      <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
-      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+      <script type="text/javascript" src="js/jquery-3.1.1.slim.min.js" ></script>
+      <script type="text/javascript" src="js/tether.min.js"></script>
+      <script type="text/javascript" src="js/bootstrap.min.js"></script>
       <script type="text/javascript" src="js/questions.js"></script>
       <script type="text/javascript" src="js/sweetalert.min.js"></script>
       <script type="text/javascript" src="js/jquery.countdown.min.js"></script>
+      <script type="text/javascript" src="js/animatedModal.min.js"></script>
       <script type="text/javascript" src="js/app.js"></script>
-      <script type="text/javascript">
-         $('.menu-burger, .menu-items').on('click', function() {
-            $('#start-game img').toggleClass('display-none');
-            $('.menu-bg, .menu-items, .menu-burger').toggleClass('fs');
-            $('.menu-burger').text() == "☰" ? $('.menu-burger').text('✕') : $('.menu-burger').text('☰');
-            if ($('.menu-burger').hasClass('fs')) {
-               document.querySelector(`audio[data-key="2"]`).play();
-            }else{
-               document.querySelector(`audio[data-key="2"]`).pause();
-            }
-         });
-      </script>
    </body>
 </html>
