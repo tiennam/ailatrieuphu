@@ -1,4 +1,4 @@
-@import url("reset.css");
+@import url("libs/reset.css");
 *{
 box-sizing: border-box;
 font-family: monospace;
@@ -220,4 +220,11 @@ display: none;
   border-image-width: 18px;
   border-image-repeat: stretch;
   border-image-outset: 15px;
+}
+.help{
+    margin-bottom: 20px;
+}
+.help img{
+    width: 65px;
+    margin-right: 20px;
 }

@@ -5,6 +5,7 @@ function Game(questions) {
     this.time = 0;
     this.start = false;
     this.isGuess = false;
+    this.hideIndex = [];
 }
 Game.prototype.startGame = function(e) {
     if (e.keyCode == 13) {
@@ -43,16 +44,16 @@ Game.prototype.keyDownHandler = function(e) {
     if (!game.isGuess && game.start) {
         switch (e.keyCode) {
             case 65:
-                GameUI.guessHandler(0);
+                if (game.hideIndex.indexOf(0)<=-1) GameUI.guessHandler(0);
                 break;
             case 66:
-                GameUI.guessHandler(1);
+                if (game.hideIndex.indexOf(1)<=-1) GameUI.guessHandler(1);
                 break;
             case 67:
-                GameUI.guessHandler(2);
+                if (game.hideIndex.indexOf(2)<=-1) GameUI.guessHandler(2);
                 break;
             case 68:
-                GameUI.guessHandler(3);
+                if (game.hideIndex.indexOf(3)<=-1) GameUI.guessHandler(3);
                 break;
         }
     }
@@ -78,7 +79,7 @@ var GameUI = {
             swal("XIN CHÚC MỪNG !", "CHÚC MỪNG BẠN ĐÃ TRỞ THÀNH TRIỆU PHÚ !", "success");
         } else {
             this.displayHTML('#wrapper,#start-game');
-            GameUI.countDown();
+            // GameUI.countDown();
             this.displayQuestion();
             this.displayMedia();
             this.displayChoices();
@@ -152,6 +153,17 @@ var GameUI = {
         });
         // GameAudio.playAudio('key',2);
     },
+    displayHelp : function(){
+        var excludeds = game.help50_50();
+        excludeds.sort();
+        $('.raise').each(function(index, el) {
+            if (index!=excludeds[0] && index!=excludeds[1]) {
+                $(el).css('opacity', '0');
+                game.hideIndex.push(index);
+            }
+        });
+        $('#help50').css('visibility','hidden')
+    },
     displayHTML: function(elmShow, elmHide) {
         $(elmHide).hide();
         $(elmShow).show();
@@ -214,6 +226,6 @@ GameAudio.playAudio('key', 1);
 window.addEventListener('keydown', game.keyDownHandler);
 window.addEventListener('keydown', game.startGame);
 GameUI.displayRule();
-// $('#help50').on('click', function(event) {
-//     GameUI.displayHelp();
-// });
+$('#help50').on('click', function(event) {
+    GameUI.displayHelp();
+});
