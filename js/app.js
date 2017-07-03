@@ -2,7 +2,6 @@ function Game(questions) {
     this.score = 0;
     this.questions = questions;
     this.currentQuestionIndex = 0;
-    this.time = 0;
     this.start = false;
     this.isGuess = false;
     this.hideIndex = [];
@@ -44,16 +43,16 @@ Game.prototype.keyDownHandler = function(e) {
     if (!game.isGuess && game.start) {
         switch (e.keyCode) {
             case 65:
-                if (game.hideIndex.indexOf(0)<=-1) GameUI.guessHandler(0);
+                if (game.hideIndex.indexOf(0) <= -1) GameUI.guessHandler(0);
                 break;
             case 66:
-                if (game.hideIndex.indexOf(1)<=-1) GameUI.guessHandler(1);
+                if (game.hideIndex.indexOf(1) <= -1) GameUI.guessHandler(1);
                 break;
             case 67:
-                if (game.hideIndex.indexOf(2)<=-1) GameUI.guessHandler(2);
+                if (game.hideIndex.indexOf(2) <= -1) GameUI.guessHandler(2);
                 break;
             case 68:
-                if (game.hideIndex.indexOf(3)<=-1) GameUI.guessHandler(3);
+                if (game.hideIndex.indexOf(3) <= -1) GameUI.guessHandler(3);
                 break;
         }
     }
@@ -71,6 +70,9 @@ Game.prototype.help50_50 = function() {
     if (n >= excluded) n++;
     return [n, excluded];
 }
+Game.prototype.helpCall = function() {
+    return this.getCurrentQuestion().answer;
+}
 var GameUI = {
     displayNext: function() {
         if (game.hasEndGame()) {
@@ -79,7 +81,7 @@ var GameUI = {
             swal("XIN CHÚC MỪNG !", "CHÚC MỪNG BẠN ĐÃ TRỞ THÀNH TRIỆU PHÚ !", "success");
         } else {
             this.displayHTML('#wrapper,#start-game');
-            // GameUI.countDown();
+            GameUI.countDown();
             this.displayQuestion();
             this.displayMedia();
             this.displayChoices();
@@ -125,8 +127,7 @@ var GameUI = {
         scoreActive.addClass('active');
     },
     displayGameOver: function(message) {
-        $('#wrapper').hide();
-        $('.gameover').show();
+        this.displayHTML('.gameover,#wrapper');
         GameAudio.playAudio('key', 6);
         swal({
                 title: message,
@@ -151,18 +152,25 @@ var GameUI = {
             animatedOut: 'bounceOut',
             color: 'rgb(244, 67, 54)'
         });
-        // GameAudio.playAudio('key',2);
     },
-    displayHelp : function(){
+    displayHelp: function() {
         var excludeds = game.help50_50();
         excludeds.sort();
         $('.raise').each(function(index, el) {
-            if (index!=excludeds[0] && index!=excludeds[1]) {
+            if (index != excludeds[0] && index != excludeds[1]) {
                 $(el).css('opacity', '0');
                 game.hideIndex.push(index);
             }
         });
-        $('#help50').css('visibility','hidden')
+        $('#help50').css('visibility', 'hidden');
+    },
+    displayHelpCall: function() {
+        swal({
+            title: "<img src='http://images.techtimes.com/data/images/full/239267/facebook-ceo-mark-zuckerberg.jpg' width='80%' class='text-center'/>",
+            text: "Tôi chắc chắn 100% là đáp án " + "<h2>" + game.helpCall() + "</h2>",
+            html: true
+        });
+        $('#helpcall').css('visibility', 'hidden');
     },
     displayHTML: function(elmShow, elmHide) {
         $(elmHide).hide();
@@ -190,6 +198,7 @@ var GameUI = {
                 setTimeout(() => {
                     $('#box-right').empty();
                     game.isGuess = false;
+                    game.hideIndex = [];
                     GameUI.displayNext();
                 }, 2000);
             } else {
@@ -204,18 +213,14 @@ var GameUI = {
             }
         }, 1000);
     }
+
 }
 
 var GameAudio = {
     playAudio: function(key, val) {
         var audio = document.querySelector(`audio[data-${key}="${val}"]`);
         audio.play();
-    },
-    stopAudio: function(key) {
-        var newAudio = document.querySelector(`audio[data-key="${key}"]`);
-        newAudio.currentTime = 0;
-        newAudio.paused;
-    },
+    }
 }
 
 
@@ -226,6 +231,5 @@ GameAudio.playAudio('key', 1);
 window.addEventListener('keydown', game.keyDownHandler);
 window.addEventListener('keydown', game.startGame);
 GameUI.displayRule();
-$('#help50').on('click', function(event) {
-    GameUI.displayHelp();
-});
+$('#help50').on('click', GameUI.displayHelp);
+$('#helpcall').on('click', GameUI.displayHelpCall);
